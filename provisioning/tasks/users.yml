@@ -1,0 +1,3 @@
+---
+  - name: froide | users.yml | create froide user
+    user: name=froide createhome=no shell=/sbin/nologin

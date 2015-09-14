@@ -1,0 +1,17 @@
+# {{ ansible_managed }}
+
+[program:{{ application.deploy_name }}_app]
+autostart=true
+command=/usr/local/bin/uwsgi --ini /etc/uwsgi/apps-enabled/{{ application.deploy_name }}.ini
+stderr_logfile=/var/log/supervisord/{{ application.deploy_name }}-stderr.log
+stdout_logfile=/var/log/supervisord/{{ application.deploy_name }}-stdout.log
+user=root
+
+[program:{{ application.deploy_name }}_celery]
+autostart=true
+command=/var/www/applications/{{ application.deploy_name }}/venvs/current/bin/celery worker -A {{ application.name }} --loglevel=INFO
+directory=/var/www/applications/{{ application.deploy_name }}/app/current
+stderr_logfile=/var/log/supervisord/{{ application.deploy_name }}-celery-stderr.log
+stdout_logfile=/var/log/supervisord/{{ application.deploy_name }}-celery-stdout.log
+user={{ application.user }}
+environment=DJANGO_SETTINGS_MODULE='{{ application.name }}.settings',DJANGO_CONFIGURATION='{{ application.configuration }}'

@@ -1,0 +1,37 @@
+---
+  - name: froide | install_rabbitmq.yml | add rabbitmq apt signing key
+    apt_key: url=http://www.rabbitmq.com/rabbitmq-signing-key-public.asc state=present
+
+  - name: froide | install_rabbitmq.yml | add official rabbitmq apt repository
+    apt_repository: repo="deb http://www.rabbitmq.com/debian/ testing main"
+
+  - name: froide | install_rabbitmq.yml | install rabbitmq
+    apt: name=rabbitmq-server state=present update_cache=yes cache_valid_time=3600
+
+  - name: froide | install_rabbitmq.yml | ensure rabbitmq started
+    service: name=rabbitmq-server state=started
+
+  - name: froide | install_rabbitmq.yml | remove guest user
+    rabbitmq_user: user=guest state=absent node=rabbit@{{ ansible_hostname }}
+
+  - name: froide | install_rabbitmq.yml | install rabbitmq vhosts
+    rabbitmq_vhost: name={{ item.name }}
+                    node=rabbit@{{ ansible_hostname }}
+                    state=present
+    with_items: rabbitmq.vhosts
+    when: rabbitmq.vhosts is defined and not((rabbitmq.vhosts is none) or (rabbitmq.vhosts|trim == ''))
+
+  - name: froide | install_rabbitmq.yml | install rabbitmq users
+    rabbitmq_user: user={{ item.username }}
+                   password={{ item.password }}
+                   vhost={{ item.vhost }}
+                   configure_priv={{ item.configure_priv | default('.*')}}
+                   read_priv={{ item.read_priv | default('.*')}}
+                   write_priv={{ item.write_priv | default('.*')}}
+                   state=present
+                   node=rabbit@{{ ansible_hostname }}
+    with_items: rabbitmq.users
+    when: rabbitmq.users is defined and not((rabbitmq.users is none) or (rabbitmq.users|trim == ''))
+
+  - name: froide | install_rabbitmq.yml | enable rabbitmq management console
+    rabbitmq_plugin: names=rabbitmq_management state=enabled

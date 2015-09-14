@@ -1,0 +1,18 @@
+---
+  - name: froide | install_dependencies.yml | install python
+    include: install_python.yml tags=install,python
+
+  - name: froide | install_dependencies.yml | install nginx
+    include: install_nginx.yml tags=install,nginx
+
+  - name: froide | install_dependencies.yml | install uwsgi
+    include: install_uwsgi.yml tags=install,uwsgi
+
+  - name: froide | install_dependencies.yml | install supervisor
+    include: install_supervisor.yml
+
+  - name: froide | install_dependencies.yml | install rabbitmq
+    include: install_rabbitmq.yml
+
+  - name: froide | install_dependencies.yml | install postgresql
+    include: install_postgresql.yml

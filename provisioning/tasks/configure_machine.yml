@@ -1,0 +1,6 @@
+---
+  - name: froide | configure_application.yml | create froide user
+    user: name=froide createhome=no shell=/sbin/nologin
+
+  - name: froide | configure_application.yml | create froide group
+    group: name=froide

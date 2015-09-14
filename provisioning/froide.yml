@@ -1,0 +1,21 @@
+---
+  - hosts: all
+    sudo: yes
+    tasks:
+      - name: froide | froide.yml | configure machine
+        include: 'tasks/configure_machine.yml'
+
+      - name: froide | froide.yml | install dependencies
+        include: 'tasks/install_dependencies.yml'
+
+      - name: froide | froide.yml | deploy application
+        include: 'tasks/deploy_application.yml'
+        tags: deploy
+
+    post_tasks:
+      - name: froide | froide.yml | restart supervisor
+        supervisorctl: name="{{ application.deploy_name }}_app" state=restarted config=/etc/supervisor/supervisord.conf
+
+      - name: froide | froide.yml | restart nginx
+        service: name=nginx state=restarted
+

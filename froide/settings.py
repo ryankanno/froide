@@ -636,6 +636,54 @@ class HerokuSSLPostmark(SSLSite, HerokuPostmark):
     pass
 
 
+class Vagrant(Base):
+    DEBUG = True
+    TEMPLATE_DEBUG = False
+
+    CELERY_ALWAYS_EAGER = values.BooleanValue(False)
+    COMPRESS_ENABLED = values.BooleanValue(True)
+    COMPRESS_OFFLINE = values.BooleanValue(True)
+
+    SITE_URL = values.Value('http://froide.org')
+
+    SECRET_URLS = values.DictValue({
+        "admin": "froide-admin",
+        "postmark_inbound": "froide_postmark_inbound",
+        "postmark_bounce": "froide_postmark_bounce"
+    })
+
+    ALLOWED_HOSTS = values.TupleValue(('froide.org',))
+
+    FOI_EMAIL_TEMPLATE = values.Value('request+{secret}@{domain}')
+    FOI_EMAIL_DOMAIN = values.Value('froide.org')
+
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    SERVER_EMAIL = values.Value(os_env('POSTMARK_INBOUND_ADDRESS'))
+    DEFAULT_FROM_EMAIL = values.Value(os_env('POSTMARK_INBOUND_ADDRESS'))
+
+    DATABASES = values.DatabaseURLValue(default=os_env('DATABASES'))
+
+    BROKER_URL = os_env('BROKER_URL')
+    CELERY_RESULT_BACKEND = os_env('CELERY_RESULT_BACKEND')
+
+    # Official Notification Mail goes through
+    # the normal Django SMTP Backend
+    EMAIL_HOST = os_env('POSTMARK_SMTP_SERVER')
+    EMAIL_PORT = values.IntegerValue(2525)
+    EMAIL_HOST_USER = os_env('POSTMARK_API_KEY')
+    EMAIL_HOST_PASSWORD = os_env('POSTMARK_API_KEY')
+    EMAIL_USE_TLS = values.BooleanValue(True)
+
+    # SMTP settings for sending FoI mail
+    FOI_EMAIL_FIXED_FROM_ADDRESS = values.BooleanValue(False)
+    FOI_EMAIL_HOST_FROM = os_env('POSTMARK_INBOUND_ADDRESS')
+    FOI_EMAIL_HOST_USER = os_env('POSTMARK_API_KEY')
+    FOI_EMAIL_HOST_PASSWORD = os_env('POSTMARK_API_KEY')
+    FOI_EMAIL_HOST = os_env('POSTMARK_SMTP_SERVER')
+    FOI_EMAIL_PORT = values.IntegerValue(2525)
+    FOI_EMAIL_USE_TLS = values.BooleanValue(True)
+
+
 try:
     from .local_settings import *  # noqa
 except ImportError:
