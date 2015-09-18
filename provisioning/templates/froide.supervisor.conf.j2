@@ -9,9 +9,9 @@ user=root
 
 [program:{{ application.deploy_name }}_celery]
 autostart=true
-command=/var/www/applications/{{ application.deploy_name }}/venvs/current/bin/celery worker -A {{ application.name }} --loglevel=INFO
-directory=/var/www/applications/{{ application.deploy_name }}/app/current
+command={{ application.deploy.venvs_path }}/current/bin/celery worker -A {{ application.name }} --loglevel=INFO
+directory={{ application.deploy.app_path }}/current
 stderr_logfile=/var/log/supervisord/{{ application.deploy_name }}-celery-stderr.log
 stdout_logfile=/var/log/supervisord/{{ application.deploy_name }}-celery-stdout.log
 user={{ application.user }}
-environment=DJANGO_SETTINGS_MODULE='{{ application.name }}.settings',DJANGO_CONFIGURATION='{{ application.configuration }}'
+environment=DJANGO_SETTINGS_MODULE='{{ django_env.DJANGO_SETTINGS_MODULE }}',DJANGO_CONFIGURATION='{{ django_env.DJANGO_CONFIGURATION }}'

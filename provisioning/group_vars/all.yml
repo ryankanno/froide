@@ -78,7 +78,6 @@ application:
   group: 'froide'
   port: 50808
   deploy_name: 'froide_production'
-  configuration: 'Vagrant'
   deploy:
     app_path: "{{ ad_deploy_to }}/app"
     venvs_path: "{{ ad_deploy_to }}/venvs"
