@@ -1,0 +1,41 @@
+---
+  - name: froide | install_elasticsearch.yml | install java8 ppa
+    apt_repository: repo="ppa:webupd8team/java" state=present
+
+  - name: froide | install_elasticsearch.yml | accept oracle license
+    debconf: name="oracle-java8-installer" question="shared/accepted-oracle-license-v1-1" value="true" vtype="select"
+
+  - name: froide | install_elasticsearch.yml | apt update
+    apt: update_cache=yes
+
+  - name: froide | install_elasticsearch.yml | install elastic search dependencies
+    apt: name={{ item }} state=latest update_cache=yes cache_valid_time=3600 force=yes install_recommends=yes
+    with_items:
+      - "python-software-properties"
+      - "oracle-java8-installer"
+      - "oracle-java8-set-default"
+    ignore_errors: true
+
+  - name: froide | install_elasticsearch.yml | add elasticsearch apt signing key
+    apt_key: id=46095ACC8548582C1A2699A9D27D666CD88E42B4 url=https://packages.elastic.co/GPG-KEY-elasticsearch state=present
+
+  - name: froide | install_elasticsearch.yml | add official elasticsearch apt repository
+    apt_repository:
+      repo: 'deb http://packages.elasticsearch.org/elasticsearch/{{ elasticsearch.deb_version }}/debian stable main'
+      state: present
+
+  - name: froide | install_elasticsearch.yml | ensure elasticsearch group
+    group: name=elasticsearch
+
+  - name: froide | install_elasticsearch.yml | ensure elasticsearch user
+    user: name=elasticsearch group=elasticsearch createhome=no
+
+  - name: froide | install_elasticsearch.yml | ensure /etc/default/elasticsearch
+    template: src=elasticsearch.j2 dest=/etc/default/elasticsearch
+
+  - name: froide | install_elasticsearch.yml | install elastic search
+    apt: name={{ elasticsearch.package }}={{ elasticsearch.version }} state=present update_cache=yes cache_valid_time=3600
+    environment: env
+
+  - name: froide | install_elasticsearch.yml | ensure /etc/elasticsearch/elasticsearch.yml
+    template: src=elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml

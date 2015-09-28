@@ -683,6 +683,15 @@ class Vagrant(Base):
     FOI_EMAIL_PORT = values.IntegerValue(2525)
     FOI_EMAIL_USE_TLS = values.BooleanValue(True)
 
+    @property
+    def HAYSTACK_CONNECTIONS(self):
+        return {
+            'default': {
+                'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+                'URL': 'http://127.0.0.1:9200/',
+                'INDEX_NAME': 'froide',
+            },
+        }
 
 try:
     from .local_settings import *  # noqa

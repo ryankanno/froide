@@ -56,6 +56,11 @@ postgresql:
       db: froide_db
       priv: "ALL"
 
+elasticsearch:
+  package: 'elasticsearch'
+  deb_version: '1.7'
+  version: '1.7.2'
+
 django_env:
   DJANGO_CONFIGURATION: 'Vagrant'
   DJANGO_SETTINGS_MODULE: 'froide.settings'

@@ -1,18 +1,28 @@
 ---
   - name: froide | install_dependencies.yml | install python
-    include: install_python.yml tags=install,python
+    include: install_python.yml
+    tags: python
 
   - name: froide | install_dependencies.yml | install nginx
-    include: install_nginx.yml tags=install,nginx
+    include: install_nginx.yml
+    tags: nginx
 
   - name: froide | install_dependencies.yml | install uwsgi
-    include: install_uwsgi.yml tags=install,uwsgi
+    include: install_uwsgi.yml
+    tags: uwsgi
 
   - name: froide | install_dependencies.yml | install supervisor
     include: install_supervisor.yml
+    tags: supervisor
 
   - name: froide | install_dependencies.yml | install rabbitmq
     include: install_rabbitmq.yml
+    tags: rabbitmq
 
   - name: froide | install_dependencies.yml | install postgresql
     include: install_postgresql.yml
+    tags: postgresql
+
+  - name: froide | install_dependencies.yml | install elasticsearch
+    include: install_elasticsearch.yml
+    tags: elasticsearch

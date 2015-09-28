@@ -11,6 +11,7 @@ This playbook installs and configures the following dependencies:
 * supervisor
 * rabbitmq
 * postgres
+* elasticsearch
 
 Install
 -------
